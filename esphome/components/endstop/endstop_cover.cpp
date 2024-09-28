@@ -60,6 +60,8 @@ void EndstopCover::setup() {
   } else if (!restore.has_value()) {
     this->position = 0.5f;
   }
+  ESP_LOGD(TAG, "'%.1f' - open_duration_", this->open_duration_);
+  ESP_LOGD(TAG, "'%.1f' - close_duration_", this->close_duration_);
 }
 void EndstopCover::loop() {
   if (this->current_operation == COVER_OPERATION_IDLE)
@@ -67,14 +69,14 @@ void EndstopCover::loop() {
 
   const uint32_t now = millis();
 
-  if ((this->current_operation == COVER_OPERATION_OPENING) && (this->is_open_() || now - this->start_dir_time_ > this->open_duration_)) {
+  if (this->current_operation == COVER_OPERATION_OPENING && (this->is_open_() || now - this->start_dir_time_ > this->open_duration_)) {
     float dur = (now - this->start_dir_time_) / 1e3f;
     ESP_LOGD(TAG, "'%s' - Open endstop reached. Took %.1fs.", this->name_.c_str(), dur);
 
     this->start_direction_(COVER_OPERATION_IDLE);
     this->position = COVER_OPEN;
     this->publish_state();
-  } else if ((this->current_operation == COVER_OPERATION_CLOSING) && (this->is_closed_() || now - this->start_dir_time_ > this->close_duration_)) {
+  } else if (this->current_operation == COVER_OPERATION_CLOSING && (this->is_closed_() || now - this->start_dir_time_ > this->close_duration_)) {
     float dur = (now - this->start_dir_time_) / 1e3f;
     ESP_LOGD(TAG, "'%s' - Close endstop reached. Took %.1fs.", this->name_.c_str(), dur);
 
