@@ -60,16 +60,12 @@ void EndstopCover::setup() {
   } else if (!restore.has_value()) {
     this->position = 0.5f;
   }
-  ESP_LOGD(TAG, "'%.1f' - open_duration_", this->open_duration_);
-  ESP_LOGD(TAG, "'%.1f' - close_duration_", this->close_duration_);
 }
 void EndstopCover::loop() {
   if (this->current_operation == COVER_OPERATION_IDLE)
     return;
 
   const uint32_t now = millis();
-  ESP_LOGD(TAG, "'%.1f' - open_duration_", this->open_duration_);
-  ESP_LOGD(TAG, "'%.1f' - close_duration_", this->close_duration_);
 
   if (this->current_operation == COVER_OPERATION_OPENING && (this->is_open_() || now - this->start_dir_time_ > this->open_duration_)) {
     float dur = (now - this->start_dir_time_) / 1e3f;
